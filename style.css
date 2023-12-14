@@ -1,0 +1,35 @@
+:root {
+    --primary-bg-color: azure;
+    --accent-color: #CF9FFF;
+    --text-color: azure;
+}
+
+* {
+    font-family: 'Times New Roman', Times, serif;
+}
+
+body {
+    background-color: var(--primary-bg-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header-container {
+    height: 75px;
+    background: var(--accent-color);
+    text-align: center;
+    color: var(--text-color);
+}
+
+.footer {
+    background: var(--accent-color);
+    padding: 20px;
+    font-size: 14px;
+    color: var(--text-color);
+    font-family: var(--nav-font);
+    text-align: center;
+    margin-top: auto;
+}
