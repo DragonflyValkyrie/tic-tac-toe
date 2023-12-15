@@ -69,6 +69,7 @@ const Game = (() => {
             }
         }
 
+        Game.resetGame();
         return true; // No empty cells found, the board is full
     };
 
@@ -88,6 +89,7 @@ const Game = (() => {
                 board[rowC][colC] === activePlayer.token
             ) {
                 console.log(`${activePlayer.name} wins!`);
+                Game.resetGame();
                 return;
             }
         }
@@ -95,8 +97,18 @@ const Game = (() => {
 
     const gameboard = Gameboard();
 
-    return { playRound, gameboard };
+    const resetGame = () => {
+        // Clear the game board
+        Game.gameboard = Gameboard();
+
+        // Reset active player to player1
+        activePlayer = player1;
+    };
+
+    return { playRound, gameboard, resetGame };
 })();
 
 // Example usage
 Game.playRound(0, 0);
+
+
