@@ -2,6 +2,8 @@
     --primary-bg-color: azure;
     --accent-color: #CF9FFF;
     --text-color: azure;
+    --cell-size: 150px;
+    --token-size: cal(var(--cell-size) * .9);
 }
 
 * {
@@ -23,6 +25,48 @@ body {
     text-align: center;
     color: var(--text-color);
 }
+
+.content-container {
+   margin: 25px;
+}
+
+.game-board {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: repeat(3, auto);
+}
+
+
+.cell {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    border: 1px solid black;
+}
+
+.cell:first-child,
+.cell:nth-child(2),
+.cell:nth-child(3) {
+    border-top: none;
+}
+
+.cell:nth-child(3n + 1) {
+    border-left: none;
+}
+
+.cell:nth-child(3n + 3) {
+    border-right: none;
+}
+
+.cell:last-child,
+.cell:nth-child(8),
+.cell:nth-child(7) {
+    border-bottom: none;
+}
+
+
 
 .footer {
     background: var(--accent-color);

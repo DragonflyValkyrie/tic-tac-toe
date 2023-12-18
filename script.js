@@ -1,3 +1,8 @@
+const GameDisplay = document.getElementById("game-board");
+    
+
+
+
 // Gameboard factory function
 const Gameboard = () => {
     const board = [["", "", ""], ["", "", ""], ["", "", ""]];
@@ -44,7 +49,8 @@ const Game = (() => {
     ];
 
     const playRound = (row, col) => {
-        const moveSuccess = gameboard.placeToken(row, col, activePlayer.token);
+
+        const moveSuccess = Game.gameboard.placeToken(row, col, activePlayer.token);
 
         checkWinner(activePlayer);
 
@@ -101,8 +107,6 @@ const Game = (() => {
         // Clear the game board
         Game.gameboard = Gameboard();
 
-        // Reset active player to player1
-        activePlayer = player1;
     };
 
     return { playRound, gameboard, resetGame };
