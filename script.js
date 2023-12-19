@@ -95,7 +95,13 @@ const gameController = (() => {
     const gameboard = Gameboard();
 
     const resetGame = () => {
+        winningMessageElement.classList.remove("show");
         gameController.gameboard = Gameboard();
+
+        // Clear the tokens from each cell on the webpage
+        cellElements.forEach(cell => {
+        cell.innerHTML = ""; // This will clear any content, including tokens
+    });
     };
 
     const endGame = (isDraw, activePlayer) => {
@@ -106,7 +112,7 @@ const gameController = (() => {
             winningMessageTextElement.innerText = `${activePlayer.name} wins!`;
         }
         winningMessageElement.classList.add("show");
-        resetGame();
+        
     };
 
     return {playRound, gameboard, resetGame, activePlayer, switchPlayer, checkWinner, logBoard, checkDraw, endGame};
@@ -118,9 +124,11 @@ const winningMessageTextElement = document.querySelector("[data-winning-message-
 const cellElements = document.querySelectorAll("[data-cell]");
 const gameboard = document.getElementById("game-board");
 
+restartButton.addEventListener("click", gameController.resetGame);
+
 // Add event listeners to each cell
 cellElements.forEach(cell => {
-    cell.addEventListener("click", handleCellClick, {once: true});
+    cell.addEventListener("click", handleCellClick);
 });
 
 function handleCellClick(event) {
@@ -131,17 +139,13 @@ function handleCellClick(event) {
     if (gameController.gameboard.placeToken(row, col, gameController.activePlayer.token)) {
         
         // Place player"s tokens to display
-        const tokenElement = clickedCell.querySelector(".token");
-        //console.log(tokenElement)
-        tokenElement.textContent = gameController.activePlayer.token;
-        //console.log(tokenElement.textContent);
-
         clickedCell.textContent = gameController.activePlayer.token;
 
         gameController.checkWinner(gameController.activePlayer);
         gameController.switchPlayer();
         gameController.logBoard();
         gameController.checkDraw();
+        
     } else {
         console.log("Cell is already occupied!");
     }
