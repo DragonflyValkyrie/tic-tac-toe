@@ -16,11 +16,11 @@ const Gameboard = () => {
         return false;
     };
     
-    return { getBoard, placeToken };
+    return {getBoard, placeToken};
 };
 
 // Player factory function
-const Player = (name, token) => ({ name, token });
+const Player = (name, token) => ({name, token});
 
 // gameController control object
 const gameController = (() => {
@@ -66,7 +66,7 @@ const gameController = (() => {
     const checkDraw = () => {
         if (isBoardFull()) {
             console.log(`It"s a draw!`);
-            gameController.resetGame();
+            gameController.endGame(true, activePlayer);
         }
     };
 
@@ -81,7 +81,8 @@ const gameController = (() => {
         for (let condition of winConditions) {
             if (checkCondition(board, condition, activePlayer)) {
                 console.log(`${activePlayer.name} wins!`);
-                gameController.resetGame();
+                gameController.endGame(false, activePlayer);
+                
                 return;
             }
         }
@@ -97,9 +98,23 @@ const gameController = (() => {
         gameController.gameboard = Gameboard();
     };
 
-    return { playRound, gameboard, resetGame, activePlayer, switchPlayer, checkWinner, logBoard, checkDraw };
+    const endGame = (isDraw, activePlayer) => {
+        if (isDraw) {
+            const drawMessage = "It's a draw!";
+            winningMessageTextElement.innerText = drawMessage;
+        } else {
+            winningMessageTextElement.innerText = `${activePlayer.name} wins!`;
+        }
+        winningMessageElement.classList.add("show");
+        resetGame();
+    };
+
+    return {playRound, gameboard, resetGame, activePlayer, switchPlayer, checkWinner, logBoard, checkDraw, endGame};
 })();
 
+const restartButton = document.getElementById("restartButton");
+const winningMessageElement = document.getElementById("winningMessage");
+const winningMessageTextElement = document.querySelector("[data-winning-message-text]");
 const cellElements = document.querySelectorAll("[data-cell]");
 const gameboard = document.getElementById("game-board");
 
