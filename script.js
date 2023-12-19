@@ -1,35 +1,33 @@
-const GameDisplay = document.getElementById("game-board");
-    
-
-
-
 // Gameboard factory function
 const Gameboard = () => {
-    const board = [["", "", ""], ["", "", ""], ["", "", ""]];
+    const board = [
+        ["", "", ""], 
+        ["", "", ""], 
+        ["", "", ""]
+    ];
+    
     const getBoard = () => board;
+    
     const placeToken = (row, col, player) => {
         if (board[row][col] === "") {
             board[row][col] = player;
             return true;
-        } else {
-            return false;
         }
+        return false;
     };
+    
     return { getBoard, placeToken };
 };
 
 // Player factory function
-const Player = (name, token) => {
-    return { name, token };
-};
+const Player = (name, token) => ({ name, token });
 
 // Game control object
 const Game = (() => {
     const player1 = Player("Player 1", "X");
     const player2 = Player("Player 2", "O");
-
     let activePlayer = player1;
-
+    
     const switchPlayer = () => {
         activePlayer = activePlayer === player1 ? player2 : player1;
     };
@@ -49,51 +47,37 @@ const Game = (() => {
     ];
 
     const playRound = (row, col) => {
-
         const moveSuccess = Game.gameboard.placeToken(row, col, activePlayer.token);
-
-        checkWinner(activePlayer);
-
+        
         if (moveSuccess) {
+            checkWinner(activePlayer);
             switchPlayer();
-            console.log(Game.gameboard.getBoard());
+            logBoard();
+            checkDraw();
+        }
+    };
 
-            if (isBoardFull()) {
-                console.log("It's a draw!");
-            }
+    const logBoard = () => {
+        console.log(Game.gameboard.getBoard());
+    };
+
+    const checkDraw = () => {
+        if (isBoardFull()) {
+            console.log("It's a draw!");
+            Game.resetGame();
         }
     };
 
     const isBoardFull = () => {
         const board = Game.gameboard.getBoard();
-
-        for (let i = 0; i < board.length; i++) {
-            for (let j = 0; j < board[i].length; j++) {
-                if (board[i][j] === "") {
-                    return false; // There is an empty cell, the board is not full
-                }
-            }
-        }
-
-        Game.resetGame();
-        return true; // No empty cells found, the board is full
+        return board.every(row => row.every(cell => cell !== ""));
     };
 
     const checkWinner = (activePlayer) => {
         const board = Game.gameboard.getBoard();
 
-        for (let i = 0; i < winConditions.length; i++) {
-            const condition = winConditions[i];
-            const [a, b, c] = condition;
-            const [rowA, colA] = a;
-            const [rowB, colB] = b;
-            const [rowC, colC] = c;
-
-            if (
-                board[rowA][colA] === activePlayer.token &&
-                board[rowB][colB] === activePlayer.token &&
-                board[rowC][colC] === activePlayer.token
-            ) {
+        for (let condition of winConditions) {
+            if (checkCondition(board, condition, activePlayer)) {
                 console.log(`${activePlayer.name} wins!`);
                 Game.resetGame();
                 return;
@@ -101,12 +85,14 @@ const Game = (() => {
         }
     };
 
+    const checkCondition = (board, condition, activePlayer) => {
+        return condition.every(([row, col]) => board[row][col] === activePlayer.token);
+    };
+
     const gameboard = Gameboard();
 
     const resetGame = () => {
-        // Clear the game board
         Game.gameboard = Gameboard();
-
     };
 
     return { playRound, gameboard, resetGame };

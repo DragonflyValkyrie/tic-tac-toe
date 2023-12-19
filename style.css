@@ -39,7 +39,6 @@ body {
     grid-template-columns: repeat(3, auto);
 }
 
-
 .cell {
     width: var(--cell-size);
     height: var(--cell-size);
@@ -98,6 +97,7 @@ body {
     border-radius: 5px;
     padding: 15px;  
     cursor: pointer;
+    margin-top: 25px;
 }
 
 .winning-message.show {
