@@ -22,14 +22,16 @@ const Gameboard = () => {
 // Player factory function
 const Player = (name, token) => ({ name, token });
 
-// Game control object
-const Game = (() => {
+// gameController control object
+const gameController = (() => {
     const player1 = Player("Player 1", "X");
     const player2 = Player("Player 2", "O");
     let activePlayer = player1;
     
     const switchPlayer = () => {
-        activePlayer = activePlayer === player1 ? player2 : player1;
+        //console.log("Before switch:", activePlayer);
+        gameController.activePlayer = gameController.activePlayer === player1 ? player2 : player1;
+        //console.log("After switch:", activePlayer);
     };
 
     const winConditions = [
@@ -47,7 +49,7 @@ const Game = (() => {
     ];
 
     const playRound = (row, col) => {
-        const moveSuccess = Game.gameboard.placeToken(row, col, activePlayer.token);
+        const moveSuccess = gameController.gameboard.placeToken(row, col, activePlayer.token);
         
         if (moveSuccess) {
             checkWinner(activePlayer);
@@ -58,28 +60,28 @@ const Game = (() => {
     };
 
     const logBoard = () => {
-        console.log(Game.gameboard.getBoard());
+        console.log(gameController.gameboard.getBoard());
     };
 
     const checkDraw = () => {
         if (isBoardFull()) {
-            console.log("It's a draw!");
-            Game.resetGame();
+            console.log(`It"s a draw!`);
+            gameController.resetGame();
         }
     };
 
     const isBoardFull = () => {
-        const board = Game.gameboard.getBoard();
+        const board = gameController.gameboard.getBoard();
         return board.every(row => row.every(cell => cell !== ""));
     };
 
     const checkWinner = (activePlayer) => {
-        const board = Game.gameboard.getBoard();
+        const board = gameController.gameboard.getBoard();
 
         for (let condition of winConditions) {
             if (checkCondition(board, condition, activePlayer)) {
                 console.log(`${activePlayer.name} wins!`);
-                Game.resetGame();
+                gameController.resetGame();
                 return;
             }
         }
@@ -92,13 +94,43 @@ const Game = (() => {
     const gameboard = Gameboard();
 
     const resetGame = () => {
-        Game.gameboard = Gameboard();
+        gameController.gameboard = Gameboard();
     };
 
-    return { playRound, gameboard, resetGame };
+    return { playRound, gameboard, resetGame, activePlayer, switchPlayer, checkWinner, logBoard, checkDraw };
 })();
 
+const cellElements = document.querySelectorAll("[data-cell]");
+const gameboard = document.getElementById("game-board");
+
+// Add event listeners to each cell
+cellElements.forEach(cell => {
+    cell.addEventListener("click", handleCellClick, {once: true});
+});
+
+function handleCellClick(event) {
+    const clickedCell = event.target;
+    const row = parseInt(clickedCell.getAttribute("data-row"));
+    const col = parseInt(clickedCell.getAttribute("data-col"));
+
+    if (gameController.gameboard.placeToken(row, col, gameController.activePlayer.token)) {
+        
+        // Place player"s tokens to display
+        const tokenElement = clickedCell.querySelector(".token");
+        //console.log(tokenElement)
+        tokenElement.textContent = gameController.activePlayer.token;
+        //console.log(tokenElement.textContent);
+
+        clickedCell.textContent = gameController.activePlayer.token;
+
+        gameController.checkWinner(gameController.activePlayer);
+        gameController.switchPlayer();
+        gameController.logBoard();
+        gameController.checkDraw();
+    } else {
+        console.log("Cell is already occupied!");
+    }
+}
+
 // Example usage
-Game.playRound(0, 0);
-
-
+//gameController.playRound(0, 0);
